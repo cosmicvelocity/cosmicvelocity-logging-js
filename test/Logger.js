@@ -1,5 +1,6 @@
 "use strict";
 
+import Level from '../src/Level';
 import Logger from '../src/Logger';
 
 describe('Logger', () => {
@@ -7,7 +8,7 @@ describe('Logger', () => {
         parameters: {}
     };
 
-    ['info', 'error', 'warn', 'time', 'timeEnd']
+    ['log', 'info', 'error', 'warn', 'time', 'timeEnd']
         .forEach(function (m) {
             mock[m] = function () {
                 mock.parameters[m] = [];
@@ -22,34 +23,123 @@ describe('Logger', () => {
         logger: mock
     });
 
-    it('options', () => {
-        expect(logger._prefix).toBe('Test');
-        expect(logger._options.prefixColor).toBe('#F2777A');
+    beforeEach(() => {
+        mock.parameters = [];
     });
 
-    it('info', () => {
-        logger.info('Hello !!');
+    describe('_options', () => {
+        it('prefix', () => {
+            expect(logger._prefix).toBe('Test');
+        });
 
-        expect(mock.parameters.info).toEqual(['%c%s%c', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Hello !!']);
+        it('default prefixColor', () => {
+            expect(logger._options.prefixColor).toBe('#F2777A');
+        });
+
+        it('manual prefixColor', () => {
+            const logger2 = new Logger('Test 2', {
+                prefixColor: 'red'
+            });
+
+            expect(logger2._options.prefixColor).toBe('red');
+        });
     });
 
-    it('error', () => {
-        logger.error('Error !!');
+    describe('log()', () => {
+        it('log', () => {
+            logger.log('Hello !!');
 
-        expect(mock.parameters.error).toEqual(['%c%s%c', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Error !!']);
+            expect(mock.parameters.log).toEqual(['%c%s%c', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Hello !!']);
+        });
     });
 
-    it('warn', () => {
-        logger.warn('Warning !!');
+    describe('debug()', () => {
+        beforeEach(() => {
+            mock.parameters = [];
+        });
 
-        expect(mock.parameters.warn).toEqual(['%c%s%c', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Warning !!']);
+        it('debug disabled', () => {
+            logger.level = Level.OFF;
+            logger.debug('Hello !!');
+
+            expect(mock.parameters.log).toEqual(undefined);
+        });
+
+        it('debug enabled', () => {
+            logger.level = Level.DEBUG;
+            logger.debug('Hello !!');
+
+            expect(mock.parameters.log).toEqual(['[%s] %c%s%c', 'DEBUG', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Hello !!']);
+        });
     });
 
-    it('time, timeEnd', () => {
-        logger.time('Test time');
-        logger.timeEnd('Test time');
+    describe('info()', () => {
+        beforeEach(() => {
+            mock.parameters = [];
+        });
 
-        expect(mock.parameters.time).toEqual(['Test time']);
-        expect(mock.parameters.timeEnd).toEqual(['Test time']);
+        it('info disabled', () => {
+            logger.level = Level.OFF;
+            logger.info('Hello !!');
+
+            expect(mock.parameters.info).toEqual(undefined);
+        });
+
+        it('info enabled', () => {
+            logger.level = Level.INFO;
+            logger.info('Hello !!');
+
+            expect(mock.parameters.info).toEqual(['[%s] %c%s%c', 'INFO', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Hello !!']);
+        });
+    });
+
+    describe('warn()', () => {
+        beforeEach(() => {
+            mock.parameters = [];
+        });
+
+        it('warn disabled', () => {
+            logger.level = Level.OFF;
+            logger.warn('Warning !!');
+
+            expect(mock.parameters.warn).toEqual(undefined);
+        });
+
+        it('warn enabled', () => {
+            logger.level = Level.WARN;
+            logger.warn('Warning !!');
+
+            expect(mock.parameters.warn).toEqual(['[%s] %c%s%c', 'WARN', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Warning !!']);
+        });
+    });
+
+    describe('error()', () => {
+        beforeEach(() => {
+            mock.parameters = [];
+        });
+
+        it('error disabled', () => {
+            logger.level = Level.OFF;
+            logger.error('Error !!');
+
+            expect(mock.parameters.error).toEqual(undefined);
+        });
+
+        it('error enabled', () => {
+            logger.level = Level.ERROR;
+            logger.error('Error !!');
+
+            expect(mock.parameters.error).toEqual(['[%s] %c%s%c', 'ERROR', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Error !!']);
+        });
+    });
+
+    describe('time(), timeEnd()', () => {
+        it('time, timeEnd', () => {
+            logger.time('Test time');
+            logger.timeEnd('Test time');
+
+            expect(mock.parameters.time).toEqual(['Test time']);
+            expect(mock.parameters.timeEnd).toEqual(['Test time']);
+        });
     });
 });

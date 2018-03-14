@@ -1,7 +1,7 @@
 {
   "name": "cosmicvelocity-logging-js",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.3",
+  "description": "It is a lightweight logging library.",
   "keywords": [
     "es6",
     "modules",

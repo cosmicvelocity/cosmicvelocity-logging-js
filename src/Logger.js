@@ -7,6 +7,8 @@
 
 'use strict';
 
+import Level from './Level';
+
 /**
  * ログ出力機能を提供します。
  */
@@ -17,14 +19,14 @@ export default class Logger {
      *
      * @type {number}
      */
-    static lastUsePrefixColor = 0;
+    static _lastUsePrefixColor = 0;
 
     /**
      * デフォルトで使用されるプレフィックスカラー。
      *
      * @type {string[]}
      */
-    static prefixColors = [
+    static _prefixColors = [
         '#F2777A',
         '#F99157',
         '#FFCC66',
@@ -47,6 +49,16 @@ export default class Logger {
         this._configure();
     }
 
+    get level() {
+        return this._options.level;
+    }
+
+    set level(level) {
+        this._options.level = level;
+
+        this._configure();
+    }
+
     /**
      * 次に使用するデフォルトのプレフィックスカラーを取得します。
      *
@@ -54,9 +66,9 @@ export default class Logger {
      * @private
      */
     static _nextPrefixColor() {
-        const prefixColor = Logger.prefixColors[Logger.lastUsePrefixColor % Logger.prefixColors.length];
+        const prefixColor = Logger._prefixColors[Logger._lastUsePrefixColor % Logger._prefixColors.length];
 
-        Logger.lastUsePrefixColor++;
+        Logger._lastUsePrefixColor++;
 
         return prefixColor;
     }
@@ -71,10 +83,12 @@ export default class Logger {
     static _normalizeOptions(options) {
         const logger = options.logger || console;
         const prefixColor = options.prefixColor || Logger._nextPrefixColor();
+        const level = options.level || Level.INFO;
 
         return {
             logger: logger,
-            prefixColor: prefixColor
+            prefixColor: prefixColor,
+            level: level
         };
     }
 
@@ -84,27 +98,65 @@ export default class Logger {
      * @private
      */
     _configure() {
-        const {logger, prefixColor} = this._options;
-        const noop = function () {
+        const {logger, prefixColor, level} = this._options;
+        const noop = function () {};
+        const style = `color:${prefixColor};font-weight:bold;`;
 
-        };
-
-        ['info', 'error', 'warn']
+        ['log']
             .forEach((m) => {
                 if (logger[m]) {
-                    this[m] = logger[m].bind(logger, '%c%s%c', `color:${prefixColor};font-weight:bold;`, this._prefix, '');
+                    this[m] = logger[m].bind(logger, '%c%s%c', style, this._prefix, '');
                 } else {
                     this[m] = noop;
                 }
             });
 
-        ['time', 'timeEnd']
+        ['debug']
             .forEach((m) => {
-                if (logger[m]) {
-                    this[m] = logger[m].bind(logger);
+                const lv = Level.fromString(m);
+
+                if (logger['log'] && (level <= lv)) {
+                    this[m] = logger['log'].bind(logger, '[%s] %c%s%c', m.toUpperCase(), style, this._prefix, '');
                 } else {
                     this[m] = noop;
                 }
+            });
+
+        ['info', 'warn', 'error']
+            .forEach((m) => {
+                const lv = Level.fromString(m);
+
+                if (logger[m] && (level <= lv)) {
+                    this[m] = logger[m].bind(logger, '[%s] %c%s%c', m.toUpperCase(), style, this._prefix, '');
+                } else {
+                    this[m] = noop;
+                }
+            });
+
+        ['trace']
+            .forEach((m) => {
+                this[m] = (logger[m]) ? logger[m].bind(logger) : noop;
+            });
+
+        ['dir', 'table']
+            .forEach((m) => {
+                if (logger[m]) {
+                    this[m] = logger[m].bind(logger);
+                } else if (logger['log']) {
+                    this[m] = logger['log'].bind(logger);
+                } else {
+                    this[m] = noop;
+                }
+            });
+
+        ['group', 'groupCollapsed', 'groupEnd']
+            .forEach((m) => {
+                this[m] = (logger[m]) ? logger[m].bind(logger) : noop;
+            });
+
+        ['time', 'timeEnd']
+            .forEach((m) => {
+                this[m] = (logger[m]) ? logger[m].bind(logger) : noop;
             });
     }
 

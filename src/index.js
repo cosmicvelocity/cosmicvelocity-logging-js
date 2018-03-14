@@ -9,6 +9,6 @@
 
 import Logger from './Logger';
 
-export default {
+export {
     Logger
 };
