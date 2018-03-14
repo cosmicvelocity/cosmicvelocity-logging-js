@@ -7,8 +7,10 @@
 
 'use strict';
 
+import Level from './Level';
 import Logger from './Logger';
 
 export {
+    Level,
     Logger
 };
