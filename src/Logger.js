@@ -108,12 +108,14 @@ export default class Logger {
      * @private
      */
     static _normalizeOptions(options) {
+        const debug = options.debug || false;
         const logger = options.logger || console;
         const prefixColor = options.prefixColor || Logger._nextPrefixColor();
         const level = options.level || Level.INFO;
         const refreshLevelInterval = options.refreshLevelInterval || 0;
 
         return {
+            debug: debug,
             logger: logger,
             prefixColor: prefixColor,
             level: level,
@@ -127,7 +129,7 @@ export default class Logger {
      * @private
      */
     _apply() {
-        const {logger, prefixColor, level, refreshLevelInterval} = this._options;
+        const {debug, logger, prefixColor, level, refreshLevelInterval} = this._options;
         const style = `color:${prefixColor};font-weight:bold;`;
         const ua = navigator.userAgent;
         const isColorSupport = /firefox/i.test(ua) ||
@@ -199,12 +201,16 @@ export default class Logger {
             });
 
         if (this._refreshLevelIntervalId !== -1) {
+            debug && this.debug('Releases the log level refresh timer.');
+
             clearInterval(this._refreshLevelIntervalId);
 
             this._refreshLevelIntervalId = -1;
         }
 
         if (0 !== refreshLevelInterval) {
+            debug && this.debug('Sets the log level refresh timer.');
+
             this._refreshLevelIntervalId = setInterval(() => {
                 const level = localStorage.getItem('debug');
 
