@@ -7,6 +7,9 @@
 
 'use strict';
 
+/**
+ * Represents the log level.
+ */
 export default {
 
     DEBUG: 0,
@@ -19,6 +22,12 @@ export default {
 
     OFF: 9,
 
+    /**
+     * Converts from a string representing the log level to a numeric value representing the priority.
+     *
+     * @param {string} s A string representing the log level (for example, DEBUG).
+     * @return {number} A numerical value representing priority.
+     */
     fromString: function (s) {
         const key = s && s.toUpperCase();
 

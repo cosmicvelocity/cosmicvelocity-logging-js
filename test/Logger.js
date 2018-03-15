@@ -33,7 +33,7 @@ describe('Logger', () => {
         });
 
         it('default prefixColor', () => {
-            expect(logger._options.prefixColor).toBe('#F2777A');
+            expect(logger._options.prefixColor).toBe('#cc6666');
         });
 
         it('manual prefixColor', () => {
@@ -49,7 +49,7 @@ describe('Logger', () => {
         it('log', () => {
             logger.log('Hello !!');
 
-            expect(mock.parameters.log).toEqual(['%c%s%c', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Hello !!']);
+            expect(mock.parameters.log).toEqual(['[%s] %c%s%c', 'INFO', 'color:#cc6666;font-weight:bold;', 'Test', '', 'Hello !!']);
         });
     });
 
@@ -69,7 +69,7 @@ describe('Logger', () => {
             logger.level = Level.DEBUG;
             logger.debug('Hello !!');
 
-            expect(mock.parameters.log).toEqual(['[%s] %c%s%c', 'DEBUG', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Hello !!']);
+            expect(mock.parameters.log).toEqual(['[%s] %c%s%c', 'DEBUG', 'color:#cc6666;font-weight:bold;', 'Test', '', 'Hello !!']);
         });
     });
 
@@ -89,7 +89,7 @@ describe('Logger', () => {
             logger.level = Level.INFO;
             logger.info('Hello !!');
 
-            expect(mock.parameters.info).toEqual(['[%s] %c%s%c', 'INFO', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Hello !!']);
+            expect(mock.parameters.info).toEqual(['[%s] %c%s%c', 'INFO', 'color:#cc6666;font-weight:bold;', 'Test', '', 'Hello !!']);
         });
     });
 
@@ -109,7 +109,7 @@ describe('Logger', () => {
             logger.level = Level.WARN;
             logger.warn('Warning !!');
 
-            expect(mock.parameters.warn).toEqual(['[%s] %c%s%c', 'WARN', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Warning !!']);
+            expect(mock.parameters.warn).toEqual(['[%s] %c%s%c', 'WARN', 'color:#cc6666;font-weight:bold;', 'Test', '', 'Warning !!']);
         });
     });
 
@@ -129,7 +129,7 @@ describe('Logger', () => {
             logger.level = Level.ERROR;
             logger.error('Error !!');
 
-            expect(mock.parameters.error).toEqual(['[%s] %c%s%c', 'ERROR', 'color:#F2777A;font-weight:bold;', 'Test', '', 'Error !!']);
+            expect(mock.parameters.error).toEqual(['[%s] %c%s%c', 'ERROR', 'color:#cc6666;font-weight:bold;', 'Test', '', 'Error !!']);
         });
     });
 
