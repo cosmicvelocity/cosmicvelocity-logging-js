@@ -129,13 +129,15 @@ export default class Logger {
      * @private
      */
     _apply() {
-        const {debug, logger, prefixColor, level, refreshLevelInterval} = this._options;
+        const { debug, logger, prefixColor, level, refreshLevelInterval } = this._options;
         const style = `color:${prefixColor};font-weight:bold;`;
         const ua = navigator.userAgent;
         const isColorSupport = /firefox/i.test(ua) ||
             (/applewebkit/i.test(ua) && !/edge/i.test(ua));
         const format = isColorSupport ? '[%s] %c%s%c' : '[%s] %s';
-        const args = isColorSupport ? [format, '', style, this._prefix, ''] : [format, '', this._prefix];
+        const args = isColorSupport
+            ? [format, '', style, this._prefix, '']
+            : [format, '', this._prefix];
 
         ['log']
             .forEach((m) => {
@@ -190,7 +192,18 @@ export default class Logger {
                 }
             });
 
-        ['group', 'groupCollapsed', 'groupEnd']
+        ['group', 'groupCollapsed']
+            .forEach((m) => {
+                if (logger[m]) {
+                    args[1] = 'INFO';
+
+                    this[m] = logger[m].bind(logger, ...args);
+                } else {
+                    this[m] = Logger._noop;
+                }
+            });
+
+        ['groupEnd']
             .forEach((m) => {
                 this[m] = (logger[m]) ? logger[m].bind(logger) : Logger._noop;
             });
