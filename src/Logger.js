@@ -79,7 +79,11 @@ export default class Logger {
 
                 break;
             case 'object':
-                prefix = Object.prototype.toString(clazz);
+                if (clazz.constructor) {
+                    prefix = clazz.constructor.name;
+                } else {
+                    prefix = Object.prototype.toString(clazz);
+                }
 
                 break;
             default:
@@ -88,7 +92,7 @@ export default class Logger {
                 break;
         }
 
-        return Logger(prefix, options);
+        return new Logger(prefix, options);
     }
 
     /**
@@ -165,9 +169,11 @@ export default class Logger {
     _apply() {
         const { debug, logger, prefixColor, level, refreshLevelInterval } = this._options;
         const style = `color:${prefixColor};font-weight:bold;`;
-        const ua = navigator.userAgent;
-        const isColorSupport = /firefox/i.test(ua) ||
-            (/applewebkit/i.test(ua) && !/edge/i.test(ua));
+        const isColorSupport = (typeof window !== 'undefined') &&
+            (
+                (/firefox/i.test(window.navigator.userAgent)) || // Firefox
+                (/applewebkit/i.test(window.navigator.userAgent) && !/edge/i.test(window.navigator.userAgent)) // Chrome, Safari
+            );
         const format = isColorSupport ? '[%s] %c%s%c' : '[%s] %s';
         const args = isColorSupport
             ? [format, '', style, this._prefix, '']
