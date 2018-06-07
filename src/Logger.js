@@ -180,7 +180,7 @@ export default class Logger {
                 this[m] = (logger[m]) ? logger[m].bind(logger) : Logger._noop;
             });
 
-        ['dir', 'table']
+        ['dir', 'dirxml', 'table']
             .forEach((m) => {
                 if (logger[m]) {
                     this[m] = logger[m].bind(logger);
