@@ -14,3 +14,5 @@ export {
     Level,
     Logger
 };
+
+export default Logger;

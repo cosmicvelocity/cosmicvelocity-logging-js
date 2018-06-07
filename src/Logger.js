@@ -57,6 +57,41 @@ export default class Logger {
     }
 
     /**
+     * Initialize the Logger.
+     *
+     * @param {*} prefix Prefix.
+     * @param {{logger: {}, prefixColor: string, level: string, refreshLevelInterval: number}} options option.
+     *      logger: Objects that actually output logs (such as console).
+     *      prefixColor: The color of the prefix.
+     *      level: A string representing the log level (for example, DEBUG).
+     *      refreshLevelInterval: Interval at which the log level is refreshed.
+     */
+    static getLogger(clazz, options = {}) {
+        let prefix;
+
+        switch (typeof clazz) {
+            case 'function':
+                if (clazz.name) {
+                    prefix = clazz.name;
+                } else {
+                    prefix = Object.prototype.toString(clazz);
+                }
+
+                break;
+            case 'object':
+                prefix = Object.prototype.toString(clazz);
+
+                break;
+            default:
+                prefix = clazz;
+
+                break;
+        }
+
+        return Logger(prefix, options);
+    }
+
+    /**
      * Gets the log level.
      *
      * @return {string} A string representing the log level.
@@ -143,7 +178,7 @@ export default class Logger {
                 if (logger[m]) {
                     args[1] = 'INFO';
 
-                    this[m] = logger['log'].bind(logger, ...args);
+                    this[m] = logger[m].bind(logger, ...args);
                 } else {
                     this[m] = Logger._noop;
                 }
@@ -175,12 +210,7 @@ export default class Logger {
                 }
             });
 
-        ['trace']
-            .forEach((m) => {
-                this[m] = (logger[m]) ? logger[m].bind(logger) : Logger._noop;
-            });
-
-        ['dir', 'dirxml', 'table']
+        ['trace', 'dir', 'dirxml', 'table']
             .forEach((m) => {
                 if (logger[m]) {
                     this[m] = logger[m].bind(logger);
@@ -193,7 +223,7 @@ export default class Logger {
 
         ['assert', 'clear']
             .forEach((m) => {
-                this[m] = (logger[m]) ? logger[m].bind(logger) : Logger._noop;
+                this[m] = logger[m] ? logger[m].bind(logger) : Logger._noop;
             });
 
         ['group', 'groupCollapsed']
@@ -209,12 +239,12 @@ export default class Logger {
 
         ['groupEnd']
             .forEach((m) => {
-                this[m] = (logger[m]) ? logger[m].bind(logger) : Logger._noop;
+                this[m] = logger[m] ? logger[m].bind(logger) : Logger._noop;
             });
 
         ['time', 'timeEnd']
             .forEach((m) => {
-                this[m] = (logger[m]) ? logger[m].bind(logger) : Logger._noop;
+                this[m] = logger[m] ? logger[m].bind(logger) : Logger._noop;
             });
 
         if (this._refreshLevelIntervalId !== -1) {
