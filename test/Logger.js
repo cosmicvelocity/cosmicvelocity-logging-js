@@ -8,7 +8,7 @@ describe('Logger', () => {
         parameters: {}
     };
 
-    ['log', 'info', 'error', 'warn', 'time', 'timeEnd']
+    ['log', 'info', 'error', 'warn', 'time', 'timeEnd', 'group', 'groupEnd']
         .forEach(function (m) {
             mock[m] = function () {
                 mock.parameters[m] = [];
@@ -140,6 +140,16 @@ describe('Logger', () => {
 
             expect(mock.parameters.time).toEqual(['Test time']);
             expect(mock.parameters.timeEnd).toEqual(['Test time']);
+        });
+    });
+
+    describe('group(), groupEnd()', () => {
+        it('group, groupEnd', () => {
+            logger.group('Test group');
+            logger.groupEnd();
+
+            expect(mock.parameters.group).toEqual(['[%s] %c%s%c', 'INFO', 'color:#cc6666;font-weight:bold;', 'Test', '', 'Test group']);
+            expect(mock.parameters.groupEnd).toEqual([]);
         });
     });
 });
