@@ -11,9 +11,9 @@
   "license": "Apache-2.0",
   "private": false,
   "bugs": {
-    "url": "https://github.com/cosmicvelocity/cosmicvelocity-logging-js/issues"
+    "url": "https://github.com/cosmicvelocity/logging-js/issues"
   },
-  "homepage": "https://github.com/cosmicvelocity/cosmicvelocity-logging-js#readme",
+  "homepage": "https://github.com/cosmicvelocity/logging-js#readme",
   "main": "build/index.js",
   "files": [
     "build"
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cosmicvelocity/cosmicvelocity-logging-js.git"
+    "url": "git+https://github.com/cosmicvelocity/logging-js.git"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
