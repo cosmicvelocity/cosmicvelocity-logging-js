@@ -13,7 +13,6 @@ import Level from './Level';
  * Provide log output function.
  */
 export default class Logger {
-
     /**
      * The default prefix color index used last.
      *
@@ -190,6 +189,11 @@ export default class Logger {
                 } else {
                     this[m] = Logger._noop;
                 }
+            });
+
+        ['assert', 'clear']
+            .forEach((m) => {
+                this[m] = (logger[m]) ? logger[m].bind(logger) : Logger._noop;
             });
 
         ['group', 'groupCollapsed']
